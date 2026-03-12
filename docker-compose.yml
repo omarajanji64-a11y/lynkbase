@@ -33,5 +33,19 @@ services:
       sh -c "pip install --no-cache-dir -r requirements.txt &&
       python -m app.workers.post_worker"
 
+  dm_worker:
+    image: python:3.11-slim
+    container_name: ig_manager_dm_worker
+    working_dir: /app
+    env_file: .env
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/app
+    command: >
+      sh -c "pip install --no-cache-dir -r requirements.txt &&
+      python -m app.workers.dm_worker"
+
 volumes:
   pg_data:

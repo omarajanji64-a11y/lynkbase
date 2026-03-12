@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from app.routers.accounts import router as accounts_router
+from app.routers.dms import router as dms_router
 from app.routers.posts import router as posts_router
 
 app = FastAPI(title="Instagram Account Manager")
@@ -13,3 +14,4 @@ def health_check() -> dict:
 
 app.include_router(accounts_router, prefix="/api")
 app.include_router(posts_router, prefix="/api")
+app.include_router(dms_router, prefix="/api")
