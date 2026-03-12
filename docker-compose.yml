@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: ig_manager_db
+    environment:
+      POSTGRES_DB: ig_manager
+      POSTGRES_USER: ig_user
+      POSTGRES_PASSWORD: ig_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: ig_manager_redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  pg_data:
