@@ -4,3 +4,5 @@ alembic==1.13.1
 psycopg2-binary==2.9.9
 python-dotenv==1.0.1
 uvicorn==0.29.0
+instagrapi==2.0.0
+cryptography==42.0.5
