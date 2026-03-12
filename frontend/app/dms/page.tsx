@@ -306,7 +306,7 @@ export default function DmsPage() {
       accountFilter === "all" || thread.account_id === Number(accountFilter);
     const matchesSearch =
       !searchTerm ||
-      (thread.username || \"\").toLowerCase().includes(searchTerm.toLowerCase());
+      (thread.username || '').toLowerCase().includes(searchTerm.toLowerCase());
     return matchesAccount && matchesSearch;
   });
 
