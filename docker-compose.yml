@@ -1,18 +1,6 @@
 version: "3.9"
 
 services:
-  db:
-    image: postgres:16
-    container_name: ig_manager_db
-    environment:
-      POSTGRES_DB: ig_manager
-      POSTGRES_USER: ig_user
-      POSTGRES_PASSWORD: ig_password
-    ports:
-      - "5432:5432"
-    volumes:
-      - pg_data:/var/lib/postgresql/data
-
   redis:
     image: redis:7
     container_name: ig_manager_redis
@@ -25,7 +13,6 @@ services:
     working_dir: /app
     env_file: .env
     depends_on:
-      - db
       - redis
     volumes:
       - .:/app
@@ -39,13 +26,9 @@ services:
     working_dir: /app
     env_file: .env
     depends_on:
-      - db
       - redis
     volumes:
       - .:/app
     command: >
       sh -c "pip install --no-cache-dir -r requirements.txt &&
       python -m app.workers.dm_worker"
-
-volumes:
-  pg_data:
