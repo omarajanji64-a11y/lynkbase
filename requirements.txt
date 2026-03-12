@@ -6,3 +6,4 @@ python-dotenv==1.0.1
 uvicorn==0.29.0
 instagrapi==2.0.0
 cryptography==42.0.5
+python-multipart==0.0.9

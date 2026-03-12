@@ -102,6 +102,16 @@ def load_session(encrypted_session: str, proxy: dict | None = None) -> Client:
     return client
 
 
+def get_device_fingerprint(encrypted_session: str) -> str | None:
+    settings = _decrypt_settings(encrypted_session)
+    fingerprint = settings.get("device_fingerprint")
+    if fingerprint:
+        return fingerprint
+    if settings:
+        return _device_fingerprint(settings)
+    return None
+
+
 def test_session(client: Client) -> bool:
     try:
         client.account_info()
