@@ -543,7 +543,7 @@ export default function DmsPage() {
                   className="min-h-[44px] flex-1 resize-none overflow-y-auto"
                   onChange={(event) => setReplyText(event.target.value)}
                   onKeyDown={(event) => {
-                    if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+                    if (event.key === "Enter" && !event.shiftKey) {
                       event.preventDefault();
                       handleSend();
                     }
