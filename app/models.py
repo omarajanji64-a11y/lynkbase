@@ -17,6 +17,7 @@ class PostStatus(str, enum.Enum):
     PENDING = "pending"
     PUBLISHED = "published"
     FAILED = "failed"
+    CANCELLED = "cancelled"
 
 
 class Account(Base):
@@ -65,6 +66,8 @@ class ScheduledPost(Base):
     post_type: Mapped[PostType] = mapped_column(Enum(PostType))
     scheduled_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     status: Mapped[PostStatus] = mapped_column(Enum(PostStatus), default=PostStatus.PENDING)
+    job_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),

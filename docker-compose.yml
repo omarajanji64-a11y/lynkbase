@@ -19,5 +19,19 @@ services:
     ports:
       - "6379:6379"
 
+  worker:
+    image: python:3.11-slim
+    container_name: ig_manager_worker
+    working_dir: /app
+    env_file: .env
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/app
+    command: >
+      sh -c "pip install --no-cache-dir -r requirements.txt &&
+      python -m app.workers.post_worker"
+
 volumes:
   pg_data:
