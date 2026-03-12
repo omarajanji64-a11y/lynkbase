@@ -4,12 +4,12 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any
 
-import boto3
 from bullmq import Job, Queue
 from dotenv import load_dotenv
 
 from app import models
 from app.db.database import SessionLocal
+from app.services.storage_service import upload_media
 
 load_dotenv()
 
@@ -27,48 +27,10 @@ def _get_queue() -> Queue:
     return Queue(QUEUE_NAME, {"connection": _get_redis_url()})
 
 
-def _get_r2_config() -> dict[str, str]:
-    account_id = os.getenv("R2_ACCOUNT_ID")
-    access_key = os.getenv("R2_ACCESS_KEY")
-    secret_key = os.getenv("R2_SECRET_KEY")
-    bucket = os.getenv("R2_BUCKET_NAME")
-
-    if not account_id or not access_key or not secret_key or not bucket:
-        raise RuntimeError("R2 credentials are not fully configured")
-
-    return {
-        "account_id": account_id,
-        "access_key": access_key,
-        "secret_key": secret_key,
-        "bucket": bucket,
-    }
-
-
-def _r2_endpoint(account_id: str) -> str:
-    return f"https://{account_id}.r2.cloudflarestorage.com"
-
-
-def _r2_client() -> Any:
-    config = _get_r2_config()
-    return boto3.client(
-        "s3",
-        endpoint_url=_r2_endpoint(config["account_id"]),
-        aws_access_key_id=config["access_key"],
-        aws_secret_access_key=config["secret_key"],
-        region_name="auto",
-    )
-
-
-def _upload_to_r2(media_path: str, account_id: int) -> tuple[str, str]:
-    config = _get_r2_config()
-    client = _r2_client()
-
+def _upload_to_storage(media_path: str, account_id: int) -> str:
     _, ext = os.path.splitext(media_path)
-    object_key = f"scheduled-posts/{account_id}/{uuid.uuid4().hex}{ext}"
-    client.upload_file(media_path, config["bucket"], object_key)
-
-    media_url = f"{_r2_endpoint(config['account_id'])}/{config['bucket']}/{object_key}"
-    return media_url, object_key
+    destination = f"scheduled-posts/{account_id}/{uuid.uuid4().hex}{ext}"
+    return upload_media(media_path, destination)
 
 
 def _ensure_aware(dt: datetime) -> datetime:
@@ -126,7 +88,7 @@ def schedule_post(
         if not account:
             raise ValueError("Account not found")
 
-        media_url, object_key = _upload_to_r2(media_path, account_id)
+        media_url = _upload_to_storage(media_path, account_id)
         normalized_type = (
             post_type
             if isinstance(post_type, models.PostType)
@@ -149,7 +111,6 @@ def schedule_post(
         job_data = {
             "post_id": post.id,
             "account_id": account_id,
-            "object_key": object_key,
             "media_url": media_url,
             "post_type": normalized_type.value,
             "caption": caption,
