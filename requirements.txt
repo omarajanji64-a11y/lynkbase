@@ -10,3 +10,4 @@ python-multipart==0.0.9
 bullmq==2.19.5
 APScheduler==3.10.4
 supabase==2.4.0
+Pillow>=8.1.1
