@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Sidebar } from "@/components/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Lynkbase",
@@ -20,6 +21,7 @@ export default function RootLayout({
             <Sidebar />
             <main className="ml-[240px] min-h-screen p-8">{children}</main>
           </div>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
